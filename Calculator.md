@@ -7,7 +7,8 @@ h1 {
 }
 </style>
 
-## My Calculator
+<h2 style="font-size:36px; font-weight:bold; margin-bottom:10px;">My Calculator</h2>
+
 
 <input type="range" id="slider" min="1" max="25" value="1">
 <span id="val">1</span>
