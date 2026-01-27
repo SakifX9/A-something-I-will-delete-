@@ -1,4 +1,7 @@
 <style>
+h2 {
+  font-size: 36px;
+}
 h1 {
   display: none !important;
 }
