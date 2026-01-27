@@ -1,6 +1,8 @@
----
-title: ""
----
+<style>
+  header, .site-header, h1 {
+    display: none !important;
+  }
+</style>
 
 # Simple Calculator: X + 2
 
