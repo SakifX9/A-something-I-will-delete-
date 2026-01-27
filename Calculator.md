@@ -1,5 +1,5 @@
 <style>
-header, .site-header, .top-header {
+.site-header {
   display: none !important;
 }
 </style>
