@@ -1,7 +1,7 @@
 <style>
-  header, .site-header, h1 {
-    display: none !important;
-  }
+header, .site-header, .top-header {
+  display: none !important;
+}
 </style>
 
 # Simple Calculator: X + 2
