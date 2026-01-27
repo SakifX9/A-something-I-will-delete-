@@ -1,12 +1,10 @@
 <style>
-.site-header {
+header.site-header, h1.site-title {
   display: none !important;
 }
 </style>
 
-# Simple Calculator: X + 2
-
-Move the slider:
+# My Calculator
 
 <input type="range" id="slider" min="1" max="25" value="1">
 <span id="val">1</span>
