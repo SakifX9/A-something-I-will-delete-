@@ -1,3 +1,7 @@
+---
+title: ""
+---
+
 # Simple Calculator: X + 2
 
 Move the slider:
