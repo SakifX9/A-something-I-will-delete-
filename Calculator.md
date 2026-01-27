@@ -1,10 +1,10 @@
 <style>
-header.site-header, h1.site-title {
+h1 {
   display: none !important;
 }
 </style>
 
-# My Calculator
+## My Calculator
 
 <input type="range" id="slider" min="1" max="25" value="1">
 <span id="val">1</span>
