@@ -1,4 +1,4 @@
-(function() {
+(function(targetId) {
   const b = (D) => {
     if (D <= 27) return Math.round(D + 4);
     else if (D <= 32) return Math.round(1.2 * D - 1.4);
@@ -10,23 +10,9 @@
 
   function init() {
     let D = 32;
-
-    // Try to get the script element that's currently executing
-    let insertionPoint = document.currentScript;
+    const target = targetId ? document.getElementById(targetId) : document.body;
     
-    // Fallback: if currentScript doesn't work, find the last script tag
-    if (!insertionPoint) {
-      const scripts = document.getElementsByTagName('script');
-      insertionPoint = scripts[scripts.length - 1];
-    }
-
-    // If still no insertion point, look for a marker div
-    if (!insertionPoint || !insertionPoint.parentNode) {
-      const marker = document.querySelector('[data-mdc-marker]');
-      if (marker) {
-        insertionPoint = marker;
-      }
-    }
+    if (!target) return;
 
     const container = document.createElement('div');
     container.style.cssText = 'padding:20px;max-width:600px;font-family:sans-serif;margin:0;position:relative';
@@ -64,12 +50,7 @@
     container.appendChild(label);
     container.appendChild(valuesDiv);
 
-    // Insert the container
-    if (insertionPoint && insertionPoint.parentNode) {
-      insertionPoint.parentNode.insertBefore(container, insertionPoint.nextSibling);
-    } else {
-      document.body.insertBefore(container, document.body.firstChild);
-    }
+    target.appendChild(container);
 
     const sizeSpan = container.querySelector('.mdc-size');
     const topSpan = container.querySelector('.mdc-top');
@@ -83,10 +64,9 @@
     });
   }
 
-  // Use MutationObserver to ensure DOM is ready
   if (document.body) {
     init();
   } else {
     document.addEventListener('DOMContentLoaded', init);
   }
-})();
+})('mdc-placeholder');
