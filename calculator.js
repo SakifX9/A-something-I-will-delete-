@@ -7,11 +7,6 @@ if (typeof window !== "undefined") {
       container.style.maxWidth = "600px";
       container.style.fontFamily = "sans-serif";
 
-      // --- Fix position so it mounts inline properly ---
-      container.style.position = "relative"; // normal flow
-      container.style.margin = "0 auto";     // horizontal center
-      container.style.width = "100%";        // take available width
-
       // --- Slider label ---
       const label = document.createElement("label");
       label.style.display = "block";
@@ -43,7 +38,7 @@ if (typeof window !== "undefined") {
       results.style.gap = "14px";
       container.appendChild(results);
 
-      // --- MOUNT EXACTLY AT SCRIPT TAG ---
+      // --- MOUNT EXACTLY AT SCRIPT TAG (inline) ---
       const scriptTag =
         document.currentScript ||
         document.getElementsByTagName("script")[document.getElementsByTagName("script").length - 1];
