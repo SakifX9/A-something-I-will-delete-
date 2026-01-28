@@ -40,8 +40,11 @@ if (typeof window !== "undefined") {
       results.style.gap = "14px";
       container.appendChild(results);
 
-      // --- Append container to body (works everywhere) ---
-      document.body.appendChild(container);
+      // --- MOUNT EXACTLY AT SCRIPT TAG ---
+      const scriptTag =
+        document.currentScript ||
+        document.getElementsByTagName("script")[document.getElementsByTagName("script").length - 1];
+      scriptTag.parentNode.insertBefore(container, scriptTag);
 
       // --- Calculator functions ---
       const b = (D) =>
@@ -69,7 +72,6 @@ if (typeof window !== "undefined") {
         `;
       }
 
-      // Listen for slider changes
       slider.addEventListener("input", update);
       update();
     }
