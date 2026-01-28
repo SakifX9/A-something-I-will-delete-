@@ -1,48 +1,72 @@
-"use client"
-import { useState } from "react";
+// Create container
+const container = document.createElement("div");
+container.style.padding = "20px";
+container.style.maxWidth = "600px";
+container.style.fontFamily = "sans-serif";
 
-export default function MonitorDistanceCalculator() {
-  const [D, setD] = useState(32);
+// --- Slider label ---
+const label = document.createElement("label");
+label.style.display = "block";
+label.style.marginBottom = "25px";
 
-  const b = (D) =>
-    Math.round(
-      (37 / ((32 / Math.sqrt((9 / 16) ** 2 + 1)) * 2.54)) *
-        ((D / Math.sqrt((9 / 16) ** 2 + 1)) * 2.54)
-    );
+const title = document.createElement("strong");
+title.textContent = "Monitor Size: ";
 
-  const f = (D) => Math.round(-1.05 * D + 147.2);
+const monitorValue = document.createElement("span");
+monitorValue.textContent = "32"; // initial value
 
-  const cmToIn = (cm) => Math.round(cm / 2.54);
+title.appendChild(monitorValue);
+label.appendChild(title);
 
-  return (
-    <div style={{ padding: "20px", maxWidth: "600px", fontFamily: "sans-serif" }}>
-      <label style={{ display: "block", marginBottom: "25px" }}>
-        <strong>Monitor Size: {D}"</strong>
-        <input
-          type="range"
-          min="20"
-          max="43"
-          value={D}
-          onChange={(e) => setD(Number(e.target.value))}
-          style={{ width: "100%", marginTop: "10px" }}
-        />
-      </label>
+// Slider input
+const slider = document.createElement("input");
+slider.type = "range";
+slider.min = "20";
+slider.max = "43";
+slider.value = "32";
+slider.style.width = "100%";
+slider.style.marginTop = "10px";
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "14px", width: "100%" }}>
-        <div>
-          Distance from top of BT buttons to monitor:{" "}
-          <span style={{ fontWeight: "bold" }}>
-            {b(D)} cm / {cmToIn(b(D))}"
-          </span>
-        </div>
+label.appendChild(slider);
+container.appendChild(label);
 
-        <div>
-          Distance from the floor to the bottom edge of monitor:{" "}
-          <span style={{ fontWeight: "bold" }}>
-            {f(D)} cm / {cmToIn(f(D))}"
-          </span>
-        </div>
-      </div>
-    </div>
+// --- Results container ---
+const results = document.createElement("div");
+results.style.display = "flex";
+results.style.flexDirection = "column";
+results.style.gap = "14px";
+container.appendChild(results);
+
+// Add container to body
+document.body.appendChild(container);
+
+// --- Calculator functions ---
+const b = (D) =>
+  Math.round(
+    (37 / ((32 / Math.sqrt((9 / 16) ** 2 + 1)) * 2.54)) *
+      ((D / Math.sqrt((9 / 16) ** 2 + 1)) * 2.54)
   );
+
+const f = (D) => Math.round(-1.05 * D + 147.2);
+const cmToIn = (cm) => Math.round(cm / 2.54);
+
+// --- Update function ---
+function update() {
+  const D = Number(slider.value);
+  monitorValue.textContent = D;
+
+  results.innerHTML = `
+    <div>
+      Distance from top of BT buttons to monitor: 
+      <b>${b(D)} cm / ${cmToIn(b(D))}"</b>
+    </div>
+    <div>
+      Distance from floor to bottom edge of monitor: 
+      <b>${f(D)} cm / ${cmToIn(f(D))}"</b>
+    </div>
+  `;
 }
+
+// Listen for slider changes
+slider.addEventListener("input", update);
+update();
