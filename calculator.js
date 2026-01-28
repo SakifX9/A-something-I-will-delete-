@@ -1,84 +1,54 @@
 (function() {
-  function initCalculator() {
-    // --- Create container ---
-    const container = document.createElement("div");
-    container.style.padding = "20px";
-    container.style.maxWidth = "600px";
-    container.style.fontFamily = "sans-serif";
+  const b = (D) => {
+    if (D <= 27) return Math.round(D + 4);
+    else if (D <= 32) return Math.round(1.2 * D - 1.4);
+    else return Math.round(2.636 * D - 47.23);
+  };
 
-    // --- Slider label ---
-    const label = document.createElement("label");
-    label.style.display = "block";
-    label.style.marginBottom = "25px";
+  const f = (D) => Math.round(-1.05 * D + 147.2);
+  const cmToIn = (cm) => Math.round(cm / 2.54);
 
-    const title = document.createElement("strong");
-    title.textContent = "Monitor Size: ";
+  function init() {
+    const container = document.querySelector('[data-monitor-calculator]') || (() => {
+      const div = document.createElement('div');
+      div.setAttribute('data-monitor-calculator', '');
+      document.body.appendChild(div);
+      return div;
+    })();
 
-    const monitorValue = document.createElement("span");
-    monitorValue.textContent = "32"; // initial value
+    let D = 32;
 
-    title.appendChild(monitorValue);
-    label.appendChild(title);
-
-    // Slider input
-    const slider = document.createElement("input");
-    slider.type = "range";
-    slider.min = "20";
-    slider.max = "43";
-    slider.value = "32";
-    slider.style.width = "100%";
-    slider.style.marginTop = "10px";
-
-    label.appendChild(slider);
-    container.appendChild(label);
-
-    // --- Results container ---
-    const results = document.createElement("div");
-    results.style.display = "flex";
-    results.style.flexDirection = "column";
-    results.style.gap = "14px";
-    container.appendChild(results);
-
-    // --- Append container directly after this script tag ---
-    const currentScript = document.currentScript;
-    currentScript.parentNode.insertBefore(container, currentScript.nextSibling);
-
-    // --- Calculator functions ---
-    const b = (D) =>
-      Math.round(
-        (37 / ((32 / Math.sqrt((9 / 16) ** 2 + 1)) * 2.54)) *
-          ((D / Math.sqrt((9 / 16) ** 2 + 1)) * 2.54)
-      );
-
-    const f = (D) => Math.round(-1.05 * D + 147.2);
-    const cmToIn = (cm) => Math.round(cm / 2.54);
-
-    // --- Update function ---
-    function update() {
-      const D = Number(slider.value);
-      monitorValue.textContent = D;
-
-      results.innerHTML = `
-        <div>
-          Distance from top of BT buttons to monitor: 
-          <b>${b(D)} cm / ${cmToIn(b(D))}"</b>
+    const html = `
+      <div style="padding:20px;max-width:600px;font-family:sans-serif">
+        <label style="display:block;margin-bottom:25px">
+          <strong>Monitor Size: <span id="mdc-size">32</span>"</strong>
+          <input type="range" id="mdc-range" min="20" max="43" value="32" style="width:100%;margin-top:10px;cursor:pointer">
+        </label>
+        <div style="display:flex;flex-direction:column;gap:14px;width:100%">
+          <div>Distance from top of BT buttons to monitor: <span style="font-weight:bold" id="mdc-top">32 cm / 13"</span></div>
+          <div>Distance from the floor to the bottom edge of monitor: <span style="font-weight:bold" id="mdc-bottom">95 cm / 37"</span></div>
         </div>
-        <div>
-          Distance from floor to bottom edge of monitor: 
-          <b>${f(D)} cm / ${cmToIn(f(D))}"</b>
-        </div>
-      `;
-    }
+      </div>
+    `;
 
-    // Listen for slider changes
-    slider.addEventListener("input", update);
-    update();
+    container.innerHTML = html;
+
+    const range = container.querySelector('#mdc-range');
+    const size = container.querySelector('#mdc-size');
+    const top = container.querySelector('#mdc-top');
+    const bottom = container.querySelector('#mdc-bottom');
+
+    range.addEventListener('input', () => {
+      D = Number(range.value);
+      size.textContent = D;
+      top.textContent = `${b(D)} cm / ${cmToIn(b(D))}"`;
+      bottom.textContent = `${f(D)} cm / ${cmToIn(f(D))}"`;
+    });
   }
 
-  // --- Run immediately if DOM is ready, otherwise wait ---
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initCalculator);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    initCalculator();
+    init();
   }
 })();
