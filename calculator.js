@@ -37,9 +37,9 @@ results.style.flexDirection = "column";
 results.style.gap = "14px";
 container.appendChild(results);
 
-// --- Append container to top of main or body ---
-const main = document.querySelector('main') || document.body;
-main.prepend(container); // prepend so it appears at the top instead of bottom-left
+// --- Append container directly after this script tag ---
+const currentScript = document.currentScript;
+currentScript.parentNode.insertBefore(container, currentScript.nextSibling);
 
 // --- Calculator functions ---
 const b = (D) =>
