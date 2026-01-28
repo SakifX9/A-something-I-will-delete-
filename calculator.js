@@ -1,4 +1,4 @@
-// Create container
+// --- Create container ---
 const container = document.createElement("div");
 container.style.padding = "20px";
 container.style.maxWidth = "600px";
@@ -37,8 +37,9 @@ results.style.flexDirection = "column";
 results.style.gap = "14px";
 container.appendChild(results);
 
-// Add container to body
-document.body.appendChild(container);
+// --- Append container to top of main or body ---
+const main = document.querySelector('main') || document.body;
+main.prepend(container); // prepend so it appears at the top instead of bottom-left
 
 // --- Calculator functions ---
 const b = (D) =>
