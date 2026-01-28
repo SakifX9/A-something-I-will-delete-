@@ -7,6 +7,11 @@ if (typeof window !== "undefined") {
       container.style.maxWidth = "600px";
       container.style.fontFamily = "sans-serif";
 
+      // --- Fix position so it mounts inline properly ---
+      container.style.position = "relative"; // normal flow
+      container.style.margin = "0 auto";     // horizontal center
+      container.style.width = "100%";        // take available width
+
       // --- Slider label ---
       const label = document.createElement("label");
       label.style.display = "block";
@@ -21,7 +26,6 @@ if (typeof window !== "undefined") {
       title.appendChild(monitorValue);
       label.appendChild(title);
 
-      // --- Slider input ---
       const slider = document.createElement("input");
       slider.type = "range";
       slider.min = "20";
@@ -33,7 +37,6 @@ if (typeof window !== "undefined") {
       label.appendChild(slider);
       container.appendChild(label);
 
-      // --- Results container ---
       const results = document.createElement("div");
       results.style.display = "flex";
       results.style.flexDirection = "column";
@@ -52,7 +55,6 @@ if (typeof window !== "undefined") {
           (37 / ((32 / Math.sqrt((9 / 16) ** 2 + 1)) * 2.54)) *
             ((D / Math.sqrt((9 / 16) ** 2 + 1)) * 2.54)
         );
-
       const f = (D) => Math.round(-1.05 * D + 147.2);
       const cmToIn = (cm) => Math.round(cm / 2.54);
 
