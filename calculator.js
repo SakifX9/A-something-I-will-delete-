@@ -6,6 +6,8 @@ if (typeof window !== "undefined") {
       container.style.padding = "20px";
       container.style.maxWidth = "600px";
       container.style.fontFamily = "sans-serif";
+      container.style.position = "static"; // <- ensures normal flow
+      container.style.display = "block";   // <- standard block element
 
       // --- Slider label ---
       const label = document.createElement("label");
@@ -38,7 +40,7 @@ if (typeof window !== "undefined") {
       results.style.gap = "14px";
       container.appendChild(results);
 
-      // --- MOUNT EXACTLY AT SCRIPT TAG (inline) ---
+      // --- Mount inline at <script> tag ---
       const scriptTag =
         document.currentScript ||
         document.getElementsByTagName("script")[document.getElementsByTagName("script").length - 1];
@@ -73,7 +75,6 @@ if (typeof window !== "undefined") {
       update();
     }
 
-    // --- Run immediately if DOM is ready, otherwise wait ---
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", initCalculator);
     } else {
