@@ -1,12 +1,27 @@
 (function() {
+  // --- Determine mount point ---
+  function getMountPoint() {
+    // Normal case: script tag exists in browser
+    if (document.currentScript) return document.currentScript;
+
+    // Fallback: pick the last <script> in body
+    const scripts = document.getElementsByTagName("script");
+    return scripts[scripts.length - 1];
+  }
+
+  // --- Insert container before the script tag ---
+  function mountContainer(container) {
+    const scriptTag = getMountPoint();
+    scriptTag.parentNode.insertBefore(container, scriptTag);
+  }
+
+  // --- Original calculator code ---
   function initCalculator() {
-    // --- Create container ---
     const container = document.createElement("div");
     container.style.padding = "20px";
     container.style.maxWidth = "600px";
     container.style.fontFamily = "sans-serif";
 
-    // --- Slider label ---
     const label = document.createElement("label");
     label.style.display = "block";
     label.style.marginBottom = "25px";
@@ -15,12 +30,11 @@
     title.textContent = "Monitor Size: ";
 
     const monitorValue = document.createElement("span");
-    monitorValue.textContent = "32"; // initial value
+    monitorValue.textContent = "32";
 
     title.appendChild(monitorValue);
     label.appendChild(title);
 
-    // --- Slider input ---
     const slider = document.createElement("input");
     slider.type = "range";
     slider.min = "20";
@@ -32,17 +46,15 @@
     label.appendChild(slider);
     container.appendChild(label);
 
-    // --- Results container ---
     const results = document.createElement("div");
     results.style.display = "flex";
     results.style.flexDirection = "column";
     results.style.gap = "14px";
     container.appendChild(results);
 
-    // --- Append container to body (works everywhere) ---
-    document.body.appendChild(container);
+    // **Mount in place**
+    mountContainer(container);
 
-    // --- Calculator functions ---
     const b = (D) =>
       Math.round(
         (37 / ((32 / Math.sqrt((9 / 16) ** 2 + 1)) * 2.54)) *
@@ -52,7 +64,6 @@
     const f = (D) => Math.round(-1.05 * D + 147.2);
     const cmToIn = (cm) => Math.round(cm / 2.54);
 
-    // --- Update function ---
     function update() {
       const D = Number(slider.value);
       monitorValue.textContent = D;
@@ -68,12 +79,10 @@
       `;
     }
 
-    // Listen for slider changes
     slider.addEventListener("input", update);
     update();
   }
 
-  // --- Run immediately if DOM is ready, otherwise wait ---
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initCalculator);
   } else {
