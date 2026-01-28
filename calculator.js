@@ -10,7 +10,7 @@
 
   function init() {
     let D = 32;
-    const target = targetId ? document.getElementById(targetId) : document.body;
+    const target = targetId ? document.getElementById(targetId) : document.querySelector('[data-mdc-target]') || document.body;
     
     if (!target) return;
 
@@ -64,9 +64,9 @@
     });
   }
 
-  if (document.body) {
-    init();
-  } else {
+  if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
 })('mdc-placeholder');
