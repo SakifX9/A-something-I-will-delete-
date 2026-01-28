@@ -1,26 +1,28 @@
 (function() {
-  // --- Determine mount point ---
-  function getMountPoint() {
-    // Normal case: script tag exists in browser
-    if (document.currentScript) return document.currentScript;
-
-    // Fallback: pick the last <script> in body
-    const scripts = document.getElementsByTagName("script");
-    return scripts[scripts.length - 1];
+  function findScriptAnchor() {
+    return document.currentScript || document.getElementsByTagName("script")[document.getElementsByTagName("script").length - 1];
   }
 
-  // --- Insert container before the script tag ---
-  function mountContainer(container) {
-    const scriptTag = getMountPoint();
-    scriptTag.parentNode.insertBefore(container, scriptTag);
+  function createMountAnchor() {
+    const script = findScriptAnchor();
+    const anchor = document.createElement("span");
+    anchor.style.display = "block"; // ensures block layout
+    script.parentNode.insertBefore(anchor, script);
+    return anchor;
   }
 
-  // --- Original calculator code ---
+  const mountPoint = createMountAnchor();
+
   function initCalculator() {
     const container = document.createElement("div");
     container.style.padding = "20px";
     container.style.maxWidth = "600px";
     container.style.fontFamily = "sans-serif";
+
+    // **Fix positioning**
+    container.style.position = "static"; // keep in normal flow
+    container.style.margin = "0";        // no bottom-left collapse
+    container.style.width = "100%";      // take available width
 
     const label = document.createElement("label");
     label.style.display = "block";
@@ -52,28 +54,23 @@
     results.style.gap = "14px";
     container.appendChild(results);
 
-    // **Mount in place**
-    mountContainer(container);
+    mountPoint.appendChild(container);
 
     const b = (D) =>
-      Math.round(
-        (37 / ((32 / Math.sqrt((9 / 16) ** 2 + 1)) * 2.54)) *
-          ((D / Math.sqrt((9 / 16) ** 2 + 1)) * 2.54)
-      );
-
-    const f = (D) => Math.round(-1.05 * D + 147.2);
-    const cmToIn = (cm) => Math.round(cm / 2.54);
+      Math.round((37 / ((32 / Math.sqrt((9/16)**2 + 1)) * 2.54)) * ((D / Math.sqrt((9/16)**2 + 1)) * 2.54));
+    const f = (D) => Math.round(-1.05*D + 147.2);
+    const cmToIn = (cm) => Math.round(cm/2.54);
 
     function update() {
       const D = Number(slider.value);
       monitorValue.textContent = D;
       results.innerHTML = `
         <div>
-          Distance from top of BT buttons to monitor: 
+          Distance from top of BT buttons to monitor:
           <b>${b(D)} cm / ${cmToIn(b(D))}"</b>
         </div>
         <div>
-          Distance from floor to bottom edge of monitor: 
+          Distance from floor to bottom edge of monitor:
           <b>${f(D)} cm / ${cmToIn(f(D))}"</b>
         </div>
       `;
