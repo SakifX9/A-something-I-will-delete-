@@ -11,16 +11,21 @@
   function init() {
     let D = 32;
 
-    // Try to get the script element that's currently executing
+    // Wait for hydration to complete
+    if (typeof window !== 'undefined' && window.__NEXTRA_HYDRATED__) {
+      return setTimeout(init, 100);
+    }
+
+    // Use a unique ID to avoid conflicts
+    const uniqueId = 'mdc-' + Math.random().toString(36).substr(2, 9);
+    
     let insertionPoint = document.currentScript;
     
-    // Fallback: if currentScript doesn't work, find the last script tag
     if (!insertionPoint) {
       const scripts = document.getElementsByTagName('script');
       insertionPoint = scripts[scripts.length - 1];
     }
 
-    // If still no insertion point, look for a marker div
     if (!insertionPoint || !insertionPoint.parentNode) {
       const marker = document.querySelector('[data-mdc-marker]');
       if (marker) {
@@ -29,6 +34,7 @@
     }
 
     const container = document.createElement('div');
+    container.id = uniqueId;
     container.style.cssText = 'padding:20px;max-width:600px;font-family:sans-serif;margin:0;position:relative';
 
     const label = document.createElement('label');
@@ -64,7 +70,6 @@
     container.appendChild(label);
     container.appendChild(valuesDiv);
 
-    // Insert the container
     if (insertionPoint && insertionPoint.parentNode) {
       insertionPoint.parentNode.insertBefore(container, insertionPoint.nextSibling);
     } else {
@@ -83,10 +88,12 @@
     });
   }
 
-  // Use MutationObserver to ensure DOM is ready
-  if (document.body) {
-    init();
+  // Delay execution to avoid hydration conflicts
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(init, 0);
+    });
   } else {
-    document.addEventListener('DOMContentLoaded', init);
+    setTimeout(init, 0);
   }
 })();
