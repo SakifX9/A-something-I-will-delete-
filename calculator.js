@@ -1,72 +1,82 @@
-(function(targetId) {
-  const b = (D) => {
-    if (D <= 27) return Math.round(D + 4);
-    else if (D <= 32) return Math.round(1.2 * D - 1.4);
-    else return Math.round(2.636 * D - 47.23);
-  };
+(function() {
+  function initCalculator() {
+    // --- Create container ---
+    const container = document.createElement("div");
+    container.style.padding = "20px";
+    container.style.maxWidth = "600px";
+    container.style.fontFamily = "sans-serif";
 
-  const f = (D) => Math.round(-1.05 * D + 147.2);
-  const cmToIn = (cm) => Math.round(cm / 2.54);
+    // --- Slider label ---
+    const label = document.createElement("label");
+    label.style.display = "block";
+    label.style.marginBottom = "25px";
 
-  function init() {
-    let D = 32;
-    const target = targetId ? document.getElementById(targetId) : document.querySelector('[data-mdc-target]') || document.body;
-    
-    if (!target) return;
+    const title = document.createElement("strong");
+    title.textContent = "Monitor Size: ";
 
-    const container = document.createElement('div');
-    container.style.cssText = 'padding:20px;max-width:600px;font-family:sans-serif;margin:0;position:relative';
+    const monitorValue = document.createElement("span");
+    monitorValue.textContent = "32"; // initial value
 
-    const label = document.createElement('label');
-    label.style.cssText = 'display:block;margin-bottom:25px;cursor:pointer';
-    
-    const title = document.createElement('strong');
-    title.innerHTML = 'Monitor Size: <span class="mdc-size">32</span>"';
-    
-    const input = document.createElement('input');
-    input.type = 'range';
-    input.min = '20';
-    input.max = '43';
-    input.value = '32';
-    input.style.cssText = 'width:100%;margin-top:10px;cursor:pointer;display:block';
-    
+    title.appendChild(monitorValue);
     label.appendChild(title);
-    const br = document.createElement('br');
-    label.appendChild(br);
-    label.appendChild(input);
 
-    const valuesDiv = document.createElement('div');
-    valuesDiv.style.cssText = 'display:flex;flex-direction:column;gap:14px;width:100%';
+    // --- Slider input ---
+    const slider = document.createElement("input");
+    slider.type = "range";
+    slider.min = "20";
+    slider.max = "43";
+    slider.value = "32";
+    slider.style.width = "100%";
+    slider.style.marginTop = "10px";
 
-    const topDiv = document.createElement('div');
-    topDiv.innerHTML = 'Distance from top of BT buttons to monitor: <span style="font-weight:bold" class="mdc-top">32 cm / 13"</span>';
-
-    const bottomDiv = document.createElement('div');
-    bottomDiv.innerHTML = 'Distance from the floor to the bottom edge of monitor: <span style="font-weight:bold" class="mdc-bottom">95 cm / 37"</span>';
-
-    valuesDiv.appendChild(topDiv);
-    valuesDiv.appendChild(bottomDiv);
-
+    label.appendChild(slider);
     container.appendChild(label);
-    container.appendChild(valuesDiv);
 
-    target.appendChild(container);
+    // --- Results container ---
+    const results = document.createElement("div");
+    results.style.display = "flex";
+    results.style.flexDirection = "column";
+    results.style.gap = "14px";
+    container.appendChild(results);
 
-    const sizeSpan = container.querySelector('.mdc-size');
-    const topSpan = container.querySelector('.mdc-top');
-    const bottomSpan = container.querySelector('.mdc-bottom');
+    // --- Append container to body (works everywhere) ---
+    document.body.appendChild(container);
 
-    input.addEventListener('input', () => {
-      D = Number(input.value);
-      sizeSpan.textContent = D;
-      topSpan.textContent = `${b(D)} cm / ${cmToIn(b(D))}"`;
-      bottomSpan.textContent = `${f(D)} cm / ${cmToIn(f(D))}"`;
-    });
+    // --- Calculator functions ---
+    const b = (D) =>
+      Math.round(
+        (37 / ((32 / Math.sqrt((9 / 16) ** 2 + 1)) * 2.54)) *
+          ((D / Math.sqrt((9 / 16) ** 2 + 1)) * 2.54)
+      );
+
+    const f = (D) => Math.round(-1.05 * D + 147.2);
+    const cmToIn = (cm) => Math.round(cm / 2.54);
+
+    // --- Update function ---
+    function update() {
+      const D = Number(slider.value);
+      monitorValue.textContent = D;
+      results.innerHTML = `
+        <div>
+          Distance from top of BT buttons to monitor: 
+          <b>${b(D)} cm / ${cmToIn(b(D))}"</b>
+        </div>
+        <div>
+          Distance from floor to bottom edge of monitor: 
+          <b>${f(D)} cm / ${cmToIn(f(D))}"</b>
+        </div>
+      `;
+    }
+
+    // Listen for slider changes
+    slider.addEventListener("input", update);
+    update();
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+  // --- Run immediately if DOM is ready, otherwise wait ---
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initCalculator);
   } else {
-    init();
+    initCalculator();
   }
-})('mdc-placeholder');
+})();
