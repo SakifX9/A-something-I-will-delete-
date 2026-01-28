@@ -11,34 +11,52 @@
   function init() {
     let D = 32;
 
+    // Try to get the script element that's currently executing
+    let insertionPoint = document.currentScript;
+    
+    // Fallback: if currentScript doesn't work, find the last script tag
+    if (!insertionPoint) {
+      const scripts = document.getElementsByTagName('script');
+      insertionPoint = scripts[scripts.length - 1];
+    }
+
+    // If still no insertion point, look for a marker div
+    if (!insertionPoint || !insertionPoint.parentNode) {
+      const marker = document.querySelector('[data-mdc-marker]');
+      if (marker) {
+        insertionPoint = marker;
+      }
+    }
+
     const container = document.createElement('div');
-    container.style.cssText = 'padding:20px;max-width:600px;font-family:sans-serif';
+    container.style.cssText = 'padding:20px;max-width:600px;font-family:sans-serif;margin:0;position:relative';
 
     const label = document.createElement('label');
     label.style.cssText = 'display:block;margin-bottom:25px;cursor:pointer';
     
     const title = document.createElement('strong');
-    title.innerHTML = 'Monitor Size: <span id="mdc-size">32</span>"';
+    title.innerHTML = 'Monitor Size: <span class="mdc-size">32</span>"';
     
     const input = document.createElement('input');
     input.type = 'range';
     input.min = '20';
     input.max = '43';
     input.value = '32';
-    input.style.cssText = 'width:100%;margin-top:10px;cursor:pointer';
+    input.style.cssText = 'width:100%;margin-top:10px;cursor:pointer;display:block';
     
     label.appendChild(title);
-    label.appendChild(document.createElement('br'));
+    const br = document.createElement('br');
+    label.appendChild(br);
     label.appendChild(input);
 
     const valuesDiv = document.createElement('div');
     valuesDiv.style.cssText = 'display:flex;flex-direction:column;gap:14px;width:100%';
 
     const topDiv = document.createElement('div');
-    topDiv.innerHTML = 'Distance from top of BT buttons to monitor: <span style="font-weight:bold" id="mdc-top">32 cm / 13"</span>';
+    topDiv.innerHTML = 'Distance from top of BT buttons to monitor: <span style="font-weight:bold" class="mdc-top">32 cm / 13"</span>';
 
     const bottomDiv = document.createElement('div');
-    bottomDiv.innerHTML = 'Distance from the floor to the bottom edge of monitor: <span style="font-weight:bold" id="mdc-bottom">95 cm / 37"</span>';
+    bottomDiv.innerHTML = 'Distance from the floor to the bottom edge of monitor: <span style="font-weight:bold" class="mdc-bottom">95 cm / 37"</span>';
 
     valuesDiv.appendChild(topDiv);
     valuesDiv.appendChild(bottomDiv);
@@ -46,14 +64,16 @@
     container.appendChild(label);
     container.appendChild(valuesDiv);
 
-    // Find the script tag that loaded this file and insert after it
-    const scripts = document.getElementsByTagName('script');
-    const currentScript = scripts[scripts.length - 1];
-    currentScript.parentNode.insertBefore(container, currentScript.nextSibling);
+    // Insert the container
+    if (insertionPoint && insertionPoint.parentNode) {
+      insertionPoint.parentNode.insertBefore(container, insertionPoint.nextSibling);
+    } else {
+      document.body.insertBefore(container, document.body.firstChild);
+    }
 
-    const sizeSpan = document.getElementById('mdc-size');
-    const topSpan = document.getElementById('mdc-top');
-    const bottomSpan = document.getElementById('mdc-bottom');
+    const sizeSpan = container.querySelector('.mdc-size');
+    const topSpan = container.querySelector('.mdc-top');
+    const bottomSpan = container.querySelector('.mdc-bottom');
 
     input.addEventListener('input', () => {
       D = Number(input.value);
@@ -63,9 +83,10 @@
     });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
+  // Use MutationObserver to ensure DOM is ready
+  if (document.body) {
     init();
+  } else {
+    document.addEventListener('DOMContentLoaded', init);
   }
 })();
