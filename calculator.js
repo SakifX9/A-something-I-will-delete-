@@ -9,40 +9,57 @@
   const cmToIn = (cm) => Math.round(cm / 2.54);
 
   function init() {
-    const container = document.querySelector('[data-monitor-calculator]') || (() => {
-      const div = document.createElement('div');
-      div.setAttribute('data-monitor-calculator', '');
-      document.body.appendChild(div);
-      return div;
-    })();
-
     let D = 32;
 
-    const html = `
-      <div style="padding:20px;max-width:600px;font-family:sans-serif">
-        <label style="display:block;margin-bottom:25px">
-          <strong>Monitor Size: <span id="mdc-size">32</span>"</strong>
-          <input type="range" id="mdc-range" min="20" max="43" value="32" style="width:100%;margin-top:10px;cursor:pointer">
-        </label>
-        <div style="display:flex;flex-direction:column;gap:14px;width:100%">
-          <div>Distance from top of BT buttons to monitor: <span style="font-weight:bold" id="mdc-top">32 cm / 13"</span></div>
-          <div>Distance from the floor to the bottom edge of monitor: <span style="font-weight:bold" id="mdc-bottom">95 cm / 37"</span></div>
-        </div>
-      </div>
-    `;
+    const container = document.createElement('div');
+    container.style.cssText = 'padding:20px;max-width:600px;font-family:sans-serif';
 
-    container.innerHTML = html;
+    const label = document.createElement('label');
+    label.style.cssText = 'display:block;margin-bottom:25px;cursor:pointer';
+    
+    const title = document.createElement('strong');
+    title.innerHTML = 'Monitor Size: <span id="mdc-size">32</span>"';
+    
+    const input = document.createElement('input');
+    input.type = 'range';
+    input.min = '20';
+    input.max = '43';
+    input.value = '32';
+    input.style.cssText = 'width:100%;margin-top:10px;cursor:pointer';
+    
+    label.appendChild(title);
+    label.appendChild(document.createElement('br'));
+    label.appendChild(input);
 
-    const range = container.querySelector('#mdc-range');
-    const size = container.querySelector('#mdc-size');
-    const top = container.querySelector('#mdc-top');
-    const bottom = container.querySelector('#mdc-bottom');
+    const valuesDiv = document.createElement('div');
+    valuesDiv.style.cssText = 'display:flex;flex-direction:column;gap:14px;width:100%';
 
-    range.addEventListener('input', () => {
-      D = Number(range.value);
-      size.textContent = D;
-      top.textContent = `${b(D)} cm / ${cmToIn(b(D))}"`;
-      bottom.textContent = `${f(D)} cm / ${cmToIn(f(D))}"`;
+    const topDiv = document.createElement('div');
+    topDiv.innerHTML = 'Distance from top of BT buttons to monitor: <span style="font-weight:bold" id="mdc-top">32 cm / 13"</span>';
+
+    const bottomDiv = document.createElement('div');
+    bottomDiv.innerHTML = 'Distance from the floor to the bottom edge of monitor: <span style="font-weight:bold" id="mdc-bottom">95 cm / 37"</span>';
+
+    valuesDiv.appendChild(topDiv);
+    valuesDiv.appendChild(bottomDiv);
+
+    container.appendChild(label);
+    container.appendChild(valuesDiv);
+
+    // Find the script tag that loaded this file and insert after it
+    const scripts = document.getElementsByTagName('script');
+    const currentScript = scripts[scripts.length - 1];
+    currentScript.parentNode.insertBefore(container, currentScript.nextSibling);
+
+    const sizeSpan = document.getElementById('mdc-size');
+    const topSpan = document.getElementById('mdc-top');
+    const bottomSpan = document.getElementById('mdc-bottom');
+
+    input.addEventListener('input', () => {
+      D = Number(input.value);
+      sizeSpan.textContent = D;
+      topSpan.textContent = `${b(D)} cm / ${cmToIn(b(D))}"`;
+      bottomSpan.textContent = `${f(D)} cm / ${cmToIn(f(D))}"`;
     });
   }
 
